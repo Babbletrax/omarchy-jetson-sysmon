@@ -75,7 +75,8 @@ start and again every five minutes.
 | CPU clock | `/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq`, `cpuinfo_max_freq` |
 | RAM, swap | `/proc/meminfo` (used = `MemTotal` - `MemAvailable`); zram compression from `/sys/block/zram*/mm_stat` |
 | Disk | `statvfs()` on each configured mount point, with `df` semantics |
-| Temperatures | `/sys/class/thermal/thermal_zone*/type` and `temp`. Zones that read `ENODATA` (Orin's `cv0`-`cv2`) are skipped; a zone that has read before and then fails (Orin's `gpu-thermal` while the GPU is power-gated) shows a dash. NVMe `Composite` temperature from hwmon |
+| Temperatures | `/sys/class/thermal/thermal_zone*/type` and `temp`. Zones that read `ENODATA` (Orin's `cv0`-`cv2`) are skipped; a zone that has read before and then fails (Orin's `gpu-thermal` while the GPU is power-gated) shows a dash |
+| NVMe temperatures | Every `temp*_input` of each `nvme` hwmon device: `Composite` plus the drive's own sensors (`Sensor 2` and so on; what each measures is vendor-defined, often the controller). Each is coloured against the drive's own `temp*_max` (warning) and `temp*_crit` (critical); a sensor without limits uses the drive's Composite ones, and a drive without any uses the settings |
 | Power | INA3221 hwmon channels: watts = `in*_input` (mV) x `curr*_input` (mA). The total is the `VDD_IN` input rail when the board has one (Orin NX/Nano, Xavier), otherwise the sum of the monitored rails (AGX Orin) |
 | Fan | `pwmfan` `pwm1` (duty cycle) and `pwm_tach` `rpm` |
 | Power mode | `/var/lib/nvpmodel/status` mapped to a name through `/etc/nvpmodel.conf` |
@@ -98,7 +99,7 @@ Edit them in Setup > Bar, or set them on the widget's entry in
 | `mounts` | `/` | Comma-separated mount points for the panel; the bar's disk metric uses the first |
 | `tempSensor` | `auto` | Bar temperature: `auto` (junction `tj` if present, else hottest), `max`, or a zone name such as `cpu`, `gpu`, `soc0`, `nvme0` |
 | `tempUnit` | `C` | `C` or `F` |
-| `tempWarn` / `tempCrit` | `70` / `85` | Temperature thresholds in degrees Celsius |
+| `tempWarn` / `tempCrit` | `70` / `85` | Temperature thresholds in degrees Celsius (NVMe sensors use the drive's own limits when it reports them) |
 | `loadWarn` / `loadCrit` | `75` / `90` | Usage thresholds in percent (GPU, CPU, RAM, disk) |
 
 ## Troubleshooting

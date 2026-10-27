@@ -40,7 +40,6 @@ Panel {
   }
 
   function loadLevel(v) { return Model.level(v, root.th.load.warn, root.th.load.crit) }
-  function tempLevel(c) { return Model.level(c, root.th.temp.warn, root.th.temp.crit) }
 
   function refresh() {
     // Restart the helper: re-detects sensors and the power mode immediately.
@@ -326,7 +325,7 @@ Panel {
             id: heroTemp
             textFormat: Text.PlainText
             text: Model.fmtTemp(parent.heroTempValue ? parent.heroTempValue.c : null, root.tempUnit, false)
-            color: root.levelColor(root.tempLevel(parent.heroTempValue ? parent.heroTempValue.c : null), root.fg)
+            color: root.levelColor(Model.tempLevel(parent.heroTempValue, root.th), root.fg)
             font.family: root.fontFamily
             font.pixelSize: Style.font.displayLarge
             font.bold: true
@@ -519,9 +518,9 @@ Panel {
               InfoPair {
                 required property var modelData
                 width: (tempGrid.width - tempGrid.columnSpacing) / 2
-                label: Model.tempLabel(modelData.name)
+                label: Model.tempLabelFor(modelData)
                 value: Model.fmtTemp(modelData.c, root.tempUnit, true)
-                valueColor: root.levelColor(root.tempLevel(modelData.c), root.fg)
+                valueColor: root.levelColor(Model.tempLevel(modelData, root.th), root.fg)
               }
             }
           }

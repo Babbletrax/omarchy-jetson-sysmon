@@ -14,7 +14,10 @@ All notable changes to this plugin are documented here. The format follows
 - Detail panel: board and power mode, GPU load and clock (with a note that
   Jetson memory is unified), CPU usage, frequency, load average and per-core
   bars (offline cores dimmed), RAM and zram swap, disk usage per mount, every
-  readable thermal zone plus NVMe, INA3221 power rails and fan.
+  readable thermal zone, INA3221 power rails and fan.
+- Every NVMe temperature sensor (Composite and the drive's own, such as the
+  controller), coloured against the drive's own warning and critical limits
+  from hwmon `temp*_max` / `temp*_crit`.
 - `jetson_sysmon.py`: a stdlib-only helper that stays running and prints one
   JSON line per interval from `/proc` and `/sys`. No root, no `tegrastats`,
   no `nvidia-smi`. Detects GPU, thermal, power and fan paths at runtime and

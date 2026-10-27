@@ -106,12 +106,24 @@ class OrinAgx(unittest.TestCase):
         self.assertEqual(mem["zram"][0]["compr"], 268435456)
 
     def test_temps_skip_enodata_and_name(self):
-        temps = {t["name"]: t for t in self.c.snapshot()["temps"]}
+        temps = {t["name"]: t for t in self.c.snapshot()["temps"] if t.get("label", "Composite") == "Composite"}
         self.assertNotIn("cv0", temps)
         self.assertEqual(temps["tj"]["c"], 52.9)
         self.assertEqual(temps["cpu"]["c"], 49.0)
         self.assertEqual(temps["nvme0"]["kind"], "storage")
         self.assertEqual(temps["nvme0"]["c"], 50.9)
+
+    def test_nvme_all_sensors_with_drive_thresholds(self):
+        nvme = [(t["name"], t["label"], t["c"], t.get("warn"), t.get("crit"))
+                for t in self.c.snapshot()["temps"] if t.get("kind") == "storage"]
+        self.assertEqual(nvme, [
+            ("nvme0", "Composite", 50.9, 83.9, 88.9),
+            # No thresholds of its own: inherits the drive's Composite ones.
+            ("nvme0", "Sensor 2", 70.8, 83.9, 88.9),
+            # Unlabelled sensors get default labels; 65261.85 C means unset.
+            ("nvme1", "Composite", 40.0, None, None),
+            ("nvme1", "Sensor 2", 45.0, None, None),
+        ])
 
     def test_gated_zone_stays_listed_without_value(self):
         self.c.snapshot()

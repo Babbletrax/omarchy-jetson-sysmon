@@ -65,6 +65,10 @@ def read_int(path):
         return None
 
 
+def natural_key(text):
+    return [int(part) if part.isdigit() else part for part in re.split(r"(\d+)", text)]
+
+
 def parse_cpu_list(text):
     """Parse a sysfs CPU list such as '0-3,6,8-11' into a sorted list."""
     cpus = set()
@@ -163,7 +167,8 @@ class Collector:
         return path
 
     def glob(self, pattern):
-        return sorted(glob.glob(self.p(pattern)))
+        # Natural order, so hwmon10 sorts after hwmon3.
+        return sorted(glob.glob(self.p(pattern)), key=natural_key)
 
     def realpath(self, path):
         return os.path.realpath(path)
@@ -232,10 +237,7 @@ class Collector:
             if name in POWER_HWMON_NAMES:
                 power.append(hw)
             elif name == "nvme":
-                label = (read_text(os.path.join(hw, "temp1_label")) or "").strip()
-                if label in ("", "Composite"):
-                    device = os.path.basename(self.realpath(os.path.join(hw, "device")))
-                    nvme.append((device if device.startswith("nvme") else "nvme", os.path.join(hw, "temp1_input")))
+                nvme.extend(self.detect_nvme_sensors(hw))
             elif name == "pwmfan" and os.path.exists(os.path.join(hw, "pwm1")):
                 fan["pwm"] = os.path.join(hw, "pwm1")
             elif name == "pwm_tach" and os.path.exists(os.path.join(hw, "rpm")):
@@ -243,6 +245,43 @@ class Collector:
             elif os.path.exists(os.path.join(hw, "fan1_input")) and "rpm" not in fan:
                 fan["rpm"] = os.path.join(hw, "fan1_input")
         return power, nvme, fan
+
+    def detect_nvme_sensors(self, hw):
+        """Every labelled temperature of one NVMe drive.
+
+        temp1 is the spec's Composite temperature; temp2..temp9 are the
+        drive's own sensors (vendor-defined, often the controller). Warning and
+        critical thresholds come from temp*_max / temp*_crit; a sensor without
+        its own falls back to the drive's Composite thresholds.
+        """
+        device = os.path.basename(self.realpath(os.path.join(hw, "device")))
+        drive = device if device.startswith("nvme") else "nvme"
+
+        def threshold(path):
+            milli = read_int(path)
+            # Unset thresholds read 0, negative, or 65261.85 C (0xFFFF K).
+            # Half-up to 0.1 C (83850 -> 83.9), unlike round()'s half-even.
+            return (milli + 50) // 100 / 10.0 if milli is not None and 0 < milli < 150000 else None
+
+        sensors = []
+        for input_path in sorted(glob.glob(os.path.join(hw, "temp*_input")),
+                                 key=lambda p: int(re.search(r"temp(\d+)_input$", p).group(1))):
+            index = re.search(r"temp(\d+)_input$", input_path).group(1)
+            label = (read_text(os.path.join(hw, "temp%s_label" % index)) or "").strip()
+            if not label:
+                label = "Composite" if index == "1" else "Sensor %s" % index
+            sensors.append({
+                "name": drive,
+                "label": label,
+                "path": input_path,
+                "warn": threshold(os.path.join(hw, "temp%s_max" % index)),
+                "crit": threshold(os.path.join(hw, "temp%s_crit" % index)),
+            })
+        composite = next((x for x in sensors if x["label"] == "Composite"), None)
+        for sensor in sensors:
+            if composite and sensor["warn"] is None and sensor["crit"] is None:
+                sensor["warn"], sensor["crit"] = composite["warn"], composite["crit"]
+        return sensors
 
     def detect_power_channels(self):
         channels = []
@@ -392,10 +431,16 @@ class Collector:
                 continue
             self.seen_zones.add(name)
             temps.append({"name": name, "c": round(milli / 1000.0, 1)})
-        for name, path in self.nvme_hwmon:
-            milli = read_int(path)
+        for sensor in self.nvme_hwmon:
+            milli = read_int(sensor["path"])
             if milli is not None and 0 < milli < 200000:
-                temps.append({"name": name, "c": round(milli / 1000.0, 1), "kind": "storage"})
+                entry = {"name": sensor["name"], "label": sensor["label"],
+                         "c": round(milli / 1000.0, 1), "kind": "storage"}
+                if sensor["warn"] is not None:
+                    entry["warn"] = sensor["warn"]
+                if sensor["crit"] is not None:
+                    entry["crit"] = sensor["crit"]
+                temps.append(entry)
         return temps
 
     def sample_power(self):

@@ -182,7 +182,7 @@ function barSegments(data, settings) {
       var t = pickTemp(d.temps, s.tempSensor)
       value = t ? t.c : null
       text = fmtTemp(value, unit, false)
-      lvl = level(value, th.temp.warn, th.temp.crit)
+      lvl = tempLevel(t, th)
     } else if (key === "power") {
       if (!d.power) continue
       value = d.power.total_w
@@ -194,15 +194,42 @@ function barSegments(data, settings) {
   return out
 }
 
-// Thermal zones for the panel: storage last, then by name, hottest flagged.
+// Level for one temperature entry. A sensor that carries its own limits
+// (NVMe temp*_max / temp*_crit) is judged by them; the rest use the settings.
+function tempLevel(t, th) {
+  if (!t) return "none"
+  var limits = th && th.temp ? th.temp : { warn: 70, crit: 85 }
+  var warn = isNum(t.warn) ? t.warn : limits.warn
+  var crit = isNum(t.crit) ? t.crit : limits.crit
+  if (isNum(t.warn) && !isNum(t.crit)) crit = Math.max(warn, limits.crit)
+  if (isNum(t.crit) && !isNum(t.warn)) warn = Math.min(crit, limits.warn)
+  return level(t.c, warn, crit)
+}
+
+// Thermal zones for the panel: storage last, then by name; a drive's
+// Composite sensor before its other sensors.
 function sortedTemps(temps) {
   var list = (temps || []).filter(function(t) { return t && t.name })
   return list.sort(function(a, b) {
     var sa = a.kind === "storage" ? 1 : 0
     var sb = b.kind === "storage" ? 1 : 0
     if (sa !== sb) return sa - sb
-    return String(a.name).localeCompare(String(b.name), undefined, { numeric: true })
+    var byName = String(a.name).localeCompare(String(b.name), undefined, { numeric: true })
+    if (byName !== 0) return byName
+    var ca = a.label === "Composite" ? 0 : 1
+    var cb = b.label === "Composite" ? 0 : 1
+    if (ca !== cb) return ca - cb
+    return String(a.label || "").localeCompare(String(b.label || ""), undefined, { numeric: true })
   })
+}
+
+// "NVMe 0" for a drive's Composite temperature, "NVMe 0 Sensor 2" for its
+// other sensors, the zone label otherwise.
+function tempLabelFor(t) {
+  if (!t) return ""
+  var base = tempLabel(t.name)
+  if (t.label && t.label !== "Composite") return base + " " + t.label
+  return base
 }
 
 function tempLabel(name) {

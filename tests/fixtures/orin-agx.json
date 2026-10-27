@@ -18,8 +18,17 @@
   "/sys/class/thermal/thermal_zone4/type": "tj-thermal\n",
   "/sys/devices/platform/bus@0/13e00000.host1x/15480000.nvdec/devfreq/15480000.nvdec/cur_freq": "998400000\n",
   "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/name": "nvme\n",
+  "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp1_crit": "88850\n",
   "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp1_input": "50850\n",
   "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp1_label": "Composite\n",
+  "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp1_max": "83850\n",
+  "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp1_min": "-20150\n",
+  "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp3_input": "70850\n",
+  "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/temp3_label": "Sensor 2\n",
+  "/sys/devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10/name": "nvme\n",
+  "/sys/devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10/temp1_input": "40000\n",
+  "/sys/devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10/temp1_max": "65261850\n",
+  "/sys/devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10/temp2_input": "45000\n",
   "/sys/devices/platform/bus@0/17000000.gpu/devfreq/17000000.gpu/cur_freq": "918000000\n",
   "/sys/devices/platform/bus@0/17000000.gpu/devfreq/17000000.gpu/max_freq": "1300500000\n",
   "/sys/devices/platform/bus@0/17000000.gpu/devfreq/17000000.gpu/min_freq": "306000000\n",
@@ -69,12 +78,14 @@
  "links": {
   "/sys/class/devfreq/15480000.nvdec": "../../devices/platform/bus@0/13e00000.host1x/15480000.nvdec/devfreq/15480000.nvdec",
   "/sys/class/devfreq/17000000.gpu": "../../devices/platform/bus@0/17000000.gpu/devfreq/17000000.gpu",
+  "/sys/class/hwmon/hwmon10": "../../devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10",
   "/sys/class/hwmon/hwmon2": "../../devices/platform/pwm-fan/hwmon/hwmon2",
   "/sys/class/hwmon/hwmon3": "../../devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3",
   "/sys/class/hwmon/hwmon5": "../../devices/platform/pwm-tach/hwmon/hwmon5",
   "/sys/class/hwmon/hwmon6": "../../devices/platform/bus@0/c240000.i2c/i2c-1/1-0040/hwmon/hwmon6",
   "/sys/devices/platform/bus@0/13e00000.host1x/15480000.nvdec/devfreq/15480000.nvdec/device": "../../../15480000.nvdec",
   "/sys/devices/platform/bus@0/14160000.pcie/pci0004:00/0004:00:00.0/0004:01:00.0/nvme/nvme0/hwmon3/device": "../../nvme0",
+  "/sys/devices/platform/bus@0/141a0000.pcie/pci0005:00/0005:00:00.0/0005:01:00.0/nvme/nvme1/hwmon10/device": "../../nvme1",
   "/sys/devices/platform/bus@0/17000000.gpu/devfreq/17000000.gpu/device": "../../../17000000.gpu"
  }
 }

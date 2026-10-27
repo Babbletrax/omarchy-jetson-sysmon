@@ -104,6 +104,28 @@ test("barSegments power and fahrenheit", () => {
   assert.equal(segs[1].text, "14W")
 })
 
+test("NVMe sensors: labels, order and the drive's own thresholds", () => {
+  const th = M.thresholds({})
+  const comp = { name: "nvme0", label: "Composite", c: 51, kind: "storage", warn: 83.9, crit: 88.9 }
+  const ctrl = { name: "nvme0", label: "Sensor 2", c: 71, kind: "storage", warn: 83.9, crit: 88.9 }
+  const bare = { name: "nvme1", label: "Sensor 2", c: 71, kind: "storage" }
+  assert.equal(M.tempLabelFor(comp), "NVMe 0")
+  assert.equal(M.tempLabelFor(ctrl), "NVMe 0 Sensor 2")
+  assert.equal(M.tempLabelFor({ name: "tj", c: 50 }), "Junction (Tj)")
+  // 71 C is past the default 70 C warning, but under the drive's 83.9 C.
+  assert.equal(M.tempLevel(ctrl, th), "normal")
+  assert.equal(M.tempLevel(bare, th), "warn")
+  assert.equal(M.tempLevel(Object.assign({}, ctrl, { c: 85 }), th), "warn")
+  assert.equal(M.tempLevel(Object.assign({}, ctrl, { c: 90 }), th), "crit")
+  assert.equal(M.tempLevel({ c: 80, warn: 75 }, th), "warn")
+  assert.equal(M.tempLevel(null, th), "none")
+  const names = Array.from(M.sortedTemps([ctrl, { name: "cpu", c: 40 }, comp])).map(M.tempLabelFor)
+  assert.deepEqual(names, ["CPU", "NVMe 0", "NVMe 0 Sensor 2"])
+  const seg = M.barSegments({ temps: [comp, ctrl] }, { metrics: ["temp"], tempSensor: "nvme0" })[0]
+  assert.equal(seg.text, "51\u00B0")
+  assert.equal(seg.level, "normal")
+})
+
 test("heroStatus", () => {
   assert.equal(M.heroStatus(snap), "MAXN · 14.1 W · fan 26%")
   assert.equal(M.heroStatus({}), "")
