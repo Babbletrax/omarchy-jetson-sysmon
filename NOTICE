@@ -1,0 +1,25 @@
+Jetson SysMon for Omarchy
+Copyright (c) 2026 Babbletrax. Released under the MIT License (see LICENSE).
+
+This plugin runs inside the Omarchy shell and builds on its public plugin API
+and UI components (qs.Ui: Panel, WidgetButton, KeyboardPanel,
+PanelSectionHeader, PanelSeparator, PanelKeyCatcher; qs.Commons: Color,
+Style). Those components are loaded from the user's Omarchy installation at
+runtime and are not redistributed here. The panel layout (hero row, section
+headers, meters, label/value pairs) follows the conventions of Omarchy's
+first-party panels, notably omarchy.power.
+
+  Omarchy - https://github.com/basecamp/omarchy
+  Copyright (c) David Heinemeier Hansson. MIT License.
+
+No source code was copied from other community system-monitor plugins. These
+MIT-licensed projects were studied for Omarchy plugin structure and idioms
+(manifest layout, settings schema, helper-process patterns) and are
+acknowledged with thanks:
+
+  yassm                     https://github.com/jotenakis2/yassm
+  io.github.arslan.sysmon   https://github.com/Mario-Mohar/io.github.arslan.sysmon
+  omarchy-hwmon             https://github.com/baylander/omarchy-hwmon
+
+Icons are Nerd Font glyphs rendered from the user's installed font (Omarchy
+ships JetBrainsMono Nerd Font); no font files are included.

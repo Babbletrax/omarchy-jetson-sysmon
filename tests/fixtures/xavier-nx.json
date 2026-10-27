@@ -1,0 +1,37 @@
+{
+ "files": {
+  "/proc/device-tree/model": "NVIDIA Jetson Xavier NX Developer Kit\u0000",
+  "/proc/meminfo": "MemTotal:       7765028 kB\nMemFree:        40000000 kB\nMemAvailable:   5000000 kB\nBuffers:         3524140 kB\nCached:          7985372 kB\nSwapCached:            0 kB\nSwapTotal:      16096508 kB\nSwapFree:       15048000 kB\n",
+  "/proc/stat": "cpu  3000 0 1500 12000 0 0 0 0 0 0\ncpu0 500 0 250 2000 0 0 0 0 0 0\ncpu1 500 0 250 2000 0 0 0 0 0 0\ncpu2 500 0 250 2000 0 0 0 0 0 0\ncpu3 500 0 250 2000 0 0 0 0 0 0\ncpu4 500 0 250 2000 0 0 0 0 0 0\ncpu5 500 0 250 2000 0 0 0 0 0 0\nintr 0\n",
+  "/sys/class/thermal/thermal_zone0/temp": "41000\n",
+  "/sys/class/thermal/thermal_zone0/type": "AUX-therm\n",
+  "/sys/class/thermal/thermal_zone1/temp": "43500\n",
+  "/sys/class/thermal/thermal_zone1/type": "CPU-therm\n",
+  "/sys/class/thermal/thermal_zone2/temp": "42000\n",
+  "/sys/class/thermal/thermal_zone2/type": "GPU-therm\n",
+  "/sys/class/thermal/thermal_zone3/temp": "100000\n",
+  "/sys/class/thermal/thermal_zone3/type": "PMIC-Die\n",
+  "/sys/class/thermal/thermal_zone4/temp": "-256000\n",
+  "/sys/class/thermal/thermal_zone4/type": "thermal-fan-est\n",
+  "/sys/devices/17000000.gv11b/devfreq/17000000.gv11b/cur_freq": "1109250000\n",
+  "/sys/devices/17000000.gv11b/devfreq/17000000.gv11b/max_freq": "1109250000\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/curr1_input": "1600\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/curr2_input": "400\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/curr3_input": "500\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in1_input": "5000\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in1_label": "VDD_IN\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in2_input": "5000\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in2_label": "VDD_CPU_GPU_CV\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in3_input": "5000\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/in3_label": "VDD_SOC\n",
+  "/sys/devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1/name": "ina3221\n",
+  "/sys/devices/gpu.0/load": "1000\n",
+  "/sys/devices/system/cpu/online": "0-5\n",
+  "/sys/devices/system/cpu/possible": "0-5\n"
+ },
+ "links": {
+  "/sys/class/devfreq/17000000.gv11b": "../../devices/17000000.gv11b/devfreq/17000000.gv11b",
+  "/sys/class/hwmon/hwmon1": "../../devices/3160000.i2c/i2c-0/0-0040/hwmon/hwmon1",
+  "/sys/devices/17000000.gv11b/devfreq/17000000.gv11b/device": "../../../17000000.gv11b"
+ }
+}

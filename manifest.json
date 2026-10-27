@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "babbletrax.jetson-sysmon",
+  "name": "Jetson SysMon",
+  "version": "0.1.0",
+  "author": "Babbletrax",
+  "license": "MIT",
+  "homepage": "https://github.com/Babbletrax/omarchy-jetson-sysmon",
+  "description": "GPU, CPU, RAM, disk and temperature for NVIDIA Jetson boards, read straight from sysfs (no nvidia-smi, no root), with a detail panel for per-core load, thermal zones, power rails and fan.",
+  "tags": ["jetson", "nvidia", "gpu", "system-monitor", "temperature", "arm64"],
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Jetson SysMon",
+    "description": "Jetson GPU, CPU, RAM, disk and temperature in the bar; click for per-core load, thermal zones, power rails and fan.",
+    "category": "System",
+    "aliases": ["jetson", "sysmon", "gpu", "tegrastats"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "metrics": ["gpu", "cpu", "ram", "temp"],
+      "labelStyle": "icons",
+      "intervalSec": 2,
+      "mounts": "/",
+      "tempSensor": "auto",
+      "tempUnit": "C",
+      "tempWarn": 70,
+      "tempCrit": 85,
+      "loadWarn": 75,
+      "loadCrit": 90
+    },
+    "schema": [
+      {
+        "key": "metrics",
+        "type": "multiselect",
+        "label": "Bar metrics",
+        "description": "What the bar shows. The panel always shows everything. Leave empty for GPU, CPU, RAM and temperature.",
+        "noSelectionText": "GPU, CPU, RAM, temperature",
+        "placeholderText": "Search metrics...",
+        "emptyText": "No metrics",
+        "options": [
+          { "value": "gpu", "label": "GPU load", "description": "Integrated GPU load from the nvgpu load node" },
+          { "value": "cpu", "label": "CPU usage", "description": "All cores, from /proc/stat" },
+          { "value": "ram", "label": "RAM usage", "description": "Used (total minus available) system memory" },
+          { "value": "disk", "label": "Disk usage", "description": "The first configured mount point" },
+          { "value": "temp", "label": "Temperature", "description": "The sensor chosen below" },
+          { "value": "power", "label": "Power", "description": "Module power from the INA3221 rail monitors" }
+        ]
+      },
+      { "key": "labelStyle", "type": "enum", "label": "Bar labels", "options": ["icons", "text"], "defaultValue": "icons", "description": "Nerd Font icons, or short text labels (GPU, CPU, RAM)." },
+      { "key": "intervalSec", "type": "integer", "label": "Refresh interval (seconds)", "min": 1, "max": 30, "step": 1, "defaultValue": 2 },
+      { "key": "mounts", "type": "string", "label": "Disk mount points", "defaultValue": "/", "description": "Comma-separated, for example / or /,/home,/mnt/data. The bar uses the first." },
+      { "key": "tempSensor", "type": "enum", "label": "Bar temperature", "options": ["auto", "max", "tj", "cpu", "gpu", "soc0", "soc1", "soc2", "nvme0"], "defaultValue": "auto", "description": "auto shows the junction temperature (tj) when the board has one, otherwise the hottest zone." },
+      { "key": "tempUnit", "type": "enum", "label": "Temperature unit", "options": ["C", "F"], "defaultValue": "C" },
+      { "key": "tempWarn", "type": "integer", "label": "Temperature warning (°C)", "min": 30, "max": 110, "step": 1, "defaultValue": 70 },
+      { "key": "tempCrit", "type": "integer", "label": "Temperature critical (°C)", "min": 30, "max": 110, "step": 1, "defaultValue": 85 },
+      { "key": "loadWarn", "type": "integer", "label": "Usage warning (%)", "min": 1, "max": 100, "step": 1, "defaultValue": 75 },
+      { "key": "loadCrit", "type": "integer", "label": "Usage critical (%)", "min": 1, "max": 100, "step": 1, "defaultValue": 90 }
+    ]
+  }
+}
