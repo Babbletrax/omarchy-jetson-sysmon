@@ -17,11 +17,18 @@ patterns=(
   '\b192\.168\.[0-9]{1,3}\.[0-9]{1,3}\b'
   '\b172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}\b'
   '\.(int|lan|local|internal|home\.arpa)\b'
-  '\.babble\.'
   'BEGIN [A-Z ]*PRIVATE KEY'
   '(ghp|glpat|gho|github_pat)_[A-Za-z0-9_]{10,}'
   '[A-Za-z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|icloud|proton)\.[a-z]+'
 )
+
+# Extra, site-specific patterns (one regex per line) can be supplied privately,
+# e.g. internal domain names: PRIVATE_SCAN_PATTERNS_FILE=/path/to/patterns.
+if [[ -n ${PRIVATE_SCAN_PATTERNS_FILE:-} && -r $PRIVATE_SCAN_PATTERNS_FILE ]]; then
+  while IFS= read -r extra; do
+    [[ -n $extra && $extra != \#* ]] && patterns+=("$extra")
+  done <"$PRIVATE_SCAN_PATTERNS_FILE"
+fi
 
 status=0
 for file in "${files[@]}"; do
