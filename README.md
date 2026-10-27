@@ -81,8 +81,8 @@ start and again every five minutes.
 | Power mode | `/var/lib/nvpmodel/status` mapped to a name through `/etc/nvpmodel.conf` |
 | Board | `/proc/device-tree/model` |
 
-Overhead on an AGX Orin at the default 2 s interval: about 0.15% of one core
-and 18 MB resident for the helper; the shell does no polling of its own.
+Overhead on an AGX Orin at the default 2 s interval: about 0.2% of one core
+and 19 MB resident for the helper; the shell does no polling of its own.
 
 ## Settings
 
