@@ -38,11 +38,17 @@ note "model tests (node)"
 if command -v node >/dev/null; then run node tests/model.test.js; else skip node; fi
 
 note "qmllint"
-qmllint=$(command -v qmllint6 || command -v qmllint || echo /usr/lib/qt6/bin/qmllint)
-if [[ -x $qmllint ]]; then
+qtbin=/usr/lib/qt6/bin
+qmllint=$(command -v qmllint6 || command -v qmllint || echo "$qtbin/qmllint")
+qmlformat=$(command -v qmlformat6 || command -v qmlformat || echo "$qtbin/qmlformat")
+if [[ -x $qmllint ]] && "$qmllint" --help 2>&1 | grep -q -- --max-warnings; then
   # Quickshell/Omarchy modules (qs.*, Quickshell) are not available to qmllint
   # outside the shell, so only syntax and hard errors fail the build.
   run "$qmllint" --silent --max-warnings -1 Panel.qml
+elif [[ -x $qmlformat ]]; then
+  # Older Qt (6.4) qmllint fails on any warning; use the QML parser instead.
+  echo "qmllint without --max-warnings; syntax check with qmlformat"
+  run "$qmlformat" Panel.qml >/dev/null
 else skip qmllint; fi
 
 note "shell scripts"
